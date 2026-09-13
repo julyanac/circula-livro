@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catálogo de Livros - Circula Livro</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- CABEÇALHO / NAVBAR -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <span class="logo-icon">📚</span> Círcula Livro
+          </a>
+        </div>
+
+        <div class="auth-buttons">
+          <a href="doar.html" class="btn-solid">+ Doar Livro</a>
+          <a href="login.html" class="btn-outline">Entrar</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="catalog-main">
+      <section class="catalog-header">
+        <h1>Catálogo de Livros Doados</h1>
+        <p>
+          Encontre sua próxima leitura gratuita e entre em contato direto com
+          quem está doando.
+        </p>
+      </section>
+
+      <!-- BARRA DE FILTROS E ORDENAÇÃO -->
+      <section class="filter-bar">
+        <div class="filter-group search-box">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Buscar por nome do livro ou autor..."
+          />
+        </div>
+
+        <div class="filter-group">
+          <select id="filter-ano">
+            <option value="">Todos os Anos</option>
+            <option value="2020+">A partir de 2020</option>
+            <option value="2000-2019">2000 até 2019</option>
+            <option value="1900-1999">1900 até 1999</option>
+            <option value="-1900">Antes de 1900</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <select id="sort-order">
+            <option value="recent">Mais recentes primeiro</option>
+            <option value="oldest">Mais antigos primeiro</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- GRADE DE EXIBIÇÃO DOS LIVROS -->
+      <section class="books-grid" id="books-grid">
+        <!-- Os cards dos livros serão renderizados via JavaScript -->
+      </section>
+    </main>
+
+    <!-- MODAL DE DETALHES E CONTATO -->
+    <div id="book-modal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <button class="modal-close" id="modal-close">&times;</button>
+        <div class="modal-body">
+          <div class="modal-image">
+            <img id="modal-img" src="" alt="Capa do livro" />
+          </div>
+          <div class="modal-info">
+            <h2 id="modal-title"></h2>
+            <p class="modal-author-year">
+              <span id="modal-author"></span> • <span id="modal-year"></span>
+            </p>
+            <div class="modal-badge">Disponível para Doação</div>
+
+            <div class="modal-section">
+              <h4>Observações do Doador:</h4>
+              <p id="modal-obs" class="modal-description"></p>
+            </div>
+
+            <div class="modal-section owner-info">
+              <h4>Doador(a):</h4>
+              <p><strong>Nome:</strong> <span id="modal-owner-name"></span></p>
+              <p>
+                <strong>Cidade:</strong> <span id="modal-owner-city"></span>
+              </p>
+            </div>
+
+            <!-- AÇÕES DE CONTATO AUTOMÁTICO -->
+            <div class="modal-actions">
+              <a id="btn-email" href="" class="btn-contact btn-email">
+                ✉️ Enviar E-mail ao Doador
+              </a>
+              <a
+                id="btn-phone"
+                href=""
+                target="_blank"
+                class="btn-contact btn-phone"
+                style="display: none"
+              >
+                💬 Contatar via WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA DO CATÁLOGO -->
+    <script>
+      // Base de dados simulada contendo cadastros prévios
+      const initialBooks = [
+        {
+          id: 1,
+          titulo: "Dom Casmurro",
+          autor: "Machado de Assis",
+          ano: 1899,
+          dataCadastro: "2026-03-10",
+          imagem: "images/leitores_interagindo.png",
+          observacao:
+            "Livro em excelente estado de conservação, capa dura, sem rasuras ou grifos.",
+          doador: {
+            nome: "Carlos Eduardo",
+            email: "carlos.eduardo@email.com",
+            cidade: "Campo Grande - MS",
+            telefone: "67999887766",
+          },
+        },
+        {
+          id: 2,
+          titulo: "O Alquimista",
+          autor: "Paulo Coelho",
+          ano: 1988,
+          dataCadastro: "2026-03-12",
+          imagem: "images/leitores_interagindo.png",
+          observacao:
+            "Possui marcas suaves de uso na lombada, mas páginas inteiramente limpas.",
+          doador: {
+            nome: "Ana Beatriz",
+            email: "ana.beatriz@email.com",
+            cidade: "Dourados - MS",
+            telefone: "", // Sem telefone cadastrado
+          },
+        },
+        {
+          id: 3,
+          titulo: "Código Limpo (Clean Code)",
+          autor: "Robert C. Martin",
+          ano: 2009,
+          dataCadastro: "2026-03-13",
+          imagem: "images/leitores_interagindo.png",
+          observacao:
+            "Excelente para estudantes de TI! Poucos grifos a lápis nos capítulos iniciais.",
+          doador: {
+            nome: "Mariana Souza",
+            email: "mariana.souza@email.com",
+            cidade: "Campo Grande - MS",
+            telefone: "67991234567",
+          },
+        },
+      ];
+
+      let books = [...initialBooks];
+
+      const booksGrid = document.getElementById("books-grid");
+      const searchInput = document.getElementById("search-input");
+      const filterAno = document.getElementById("filter-ano");
+      const sortOrder = document.getElementById("sort-order");
+
+      const modal = document.getElementById("book-modal");
+      const modalClose = document.getElementById("modal-close");
+
+      function renderBooks() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const anoVal = filterAno.value;
+        const sortVal = sortOrder.value;
+
+        // 1. Filtragem
+        let filtered = books.filter((book) => {
+          const matchText =
+            book.titulo.toLowerCase().includes(searchTerm) ||
+            book.autor.toLowerCase().includes(searchTerm) ||
+            book.ano.toString().includes(searchTerm);
+
+          let matchAno = true;
+          if (anoVal === "2020+") matchAno = book.ano >= 2020;
+          else if (anoVal === "2000-2019")
+            matchAno = book.ano >= 2000 && book.ano <= 2019;
+          else if (anoVal === "1900-1999")
+            matchAno = book.ano >= 1900 && book.ano <= 1999;
+          else if (anoVal === "-1900") matchAno = book.ano < 1900;
+
+          return matchText && matchAno;
+        });
+
+        // 2. Ordenação por data de cadastro
+        filtered.sort((a, b) => {
+          const dateA = new Date(a.dataCadastro);
+          const dateB = new Date(b.dataCadastro);
+          return sortVal === "recent" ? dateB - dateA : dateA - dateB;
+        });
+
+        // 3. Renderização no DOM
+        booksGrid.innerHTML = "";
+
+        if (filtered.length === 0) {
+          booksGrid.innerHTML = `<div class="no-results">Nenhum livro encontrado com os filtros selecionados.</div>`;
+          return;
+        }
+
+        filtered.forEach((book) => {
+          const card = document.createElement("div");
+          card.className = "book-card";
+          card.innerHTML = `
+            <div class="book-card-img">
+              <img src="${book.imagem}" alt="${book.titulo}">
+            </div>
+            <div class="book-card-body">
+              <span class="book-year-badge">${book.ano}</span>
+              <h3 class="book-title">${book.titulo}</h3>
+              <p class="book-author">${book.autor}</p>
+              <p class="book-location">📍 ${book.doador.cidade}</p>
+              <button class="btn-details" onclick="openModal(${book.id})">Ver Detalhes & Tenho Interesse</button>
+            </div>
+          `;
+          booksGrid.appendChild(card);
+        });
+      }
+
+      // Função para abrir modal com dados e preparar links de contato automático
+      window.openModal = function (id) {
+        const book = books.find((b) => b.id === id);
+        if (!book) return;
+
+        document.getElementById("modal-img").src = book.imagem;
+        document.getElementById("modal-title").textContent = book.titulo;
+        document.getElementById("modal-author").textContent = book.autor;
+        document.getElementById("modal-year").textContent = book.ano;
+        document.getElementById("modal-obs").textContent =
+          book.observacao || "Nenhuma observação informada.";
+        document.getElementById("modal-owner-name").textContent =
+          book.doador.nome;
+        document.getElementById("modal-owner-city").textContent =
+          book.doador.cidade;
+
+        // E-mail automático via mailto:
+        const emailSubject = encodeURIComponent(
+          `Interesse no livro: ${book.titulo}`,
+        );
+        const emailBody = encodeURIComponent(
+          `Oi, ${book.doador.nome}!\n\nTenho interesse no livro "${book.titulo}" (${book.autor}, ${book.ano}) que você anunciou no Circula Livro.\n\nAinda está disponível para doação? Como podemos combinar a entrega/retirada?\n\nObrigado(a)!`,
+        );
+        document.getElementById("btn-email").href =
+          `mailto:${book.doador.email}?subject=${emailSubject}&body=${emailBody}`;
+
+        // Telefone / WhatsApp automático (se cadastrado)
+        const phoneBtn = document.getElementById("btn-phone");
+        if (book.doador.telefone && book.doador.telefone.trim() !== "") {
+          const cleanPhone = book.doador.telefone.replace(/\D/g, "");
+          const waMessage = encodeURIComponent(
+            `Oi, ${book.doador.nome}! Tenho interesse no livro "${book.titulo}" que você anunciou no Circula Livro.`,
+          );
+          phoneBtn.href = `https://api.whatsapp.com/send?phone=55${cleanPhone}&text=${waMessage}`;
+          phoneBtn.style.display = "inline-flex";
+        } else {
+          phoneBtn.style.display = "none";
+        }
+
+        modal.style.display = "flex";
+      };
+
+      // Eventos de fechar o Modal
+      modalClose.addEventListener(
+        "click",
+        () => (modal.style.display = "none"),
+      );
+      window.addEventListener("click", (e) => {
+        if (e.target === modal) modal.style.display = "none";
+      });
+
+      // Eventos dos filtros
+      searchInput.addEventListener("input", renderBooks);
+      filterAno.addEventListener("change", renderBooks);
+      sortOrder.addEventListener("change", renderBooks);
+
+      // Renderização inicial
+      renderBooks();
+    </script>
+  </body>
+</html>

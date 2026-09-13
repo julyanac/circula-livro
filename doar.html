@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doar Livro - Circula Livro</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- CABEÇALHO / NAVBAR -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <span class="logo-icon">📚</span> Círcula Livro
+          </a>
+        </div>
+
+        <div class="auth-buttons">
+          <a href="login.html" class="btn-outline">Entrar</a>
+          <a href="cadastro.html" class="btn-solid">Cadastrar-se</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="auth-section">
+        <div class="auth-container form-container-wide">
+          <!-- Mensagem de Sucesso (Inicialmente Oculta) -->
+          <div
+            id="success-message"
+            class="success-banner"
+            style="display: none"
+          >
+            <span class="success-icon">📖✨</span>
+            <h3>Livro anunciado com sucesso!</h3>
+            <p>
+              Seu livro já está disponível para a comunidade. Redirecionando
+              para o catálogo...
+            </p>
+          </div>
+
+          <div id="form-header" class="auth-header">
+            <h2>Anuncie um Livro para Doação</h2>
+            <p>
+              Preencha os dados abaixo para disponibilizar seu livro na
+              plataforma.
+            </p>
+          </div>
+
+          <form
+            id="doar-form"
+            action="#"
+            method="POST"
+            enctype="multipart/form-data"
+            class="auth-form"
+          >
+            <!-- Nome do Livro (Obrigatório) -->
+            <div class="form-group">
+              <label for="titulo">Nome do Livro *</label>
+              <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                placeholder="Ex: Dom Casmurro"
+                required
+              />
+            </div>
+
+            <!-- Linha Dupla: Autor e Ano -->
+            <div class="form-row">
+              <div class="form-group flex-2">
+                <label for="autor">Autor *</label>
+                <input
+                  type="text"
+                  id="autor"
+                  name="autor"
+                  placeholder="Ex: Machado de Assis"
+                  required
+                />
+              </div>
+
+              <div class="form-group flex-1">
+                <label for="ano">Ano *</label>
+                <input
+                  type="number"
+                  id="ano"
+                  name="ano"
+                  placeholder="Ex: 1899"
+                  min="1000"
+                  max="2026"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Upload de Fotos (Obrigatório - 1 ou mais) -->
+            <div class="form-group">
+              <label for="fotos">Fotos do Livro (Adicione 1 ou mais) *</label>
+              <input
+                type="file"
+                id="fotos"
+                name="fotos[]"
+                accept="image/*"
+                multiple
+                required
+              />
+              <span class="input-hint"
+                >Você pode selecionar múltiplos arquivos de imagem.</span
+              >
+            </div>
+
+            <!-- Observações (Opcional) -->
+            <div class="form-group">
+              <label for="observacao">
+                Observação <span class="optional">(Opcional)</span>
+              </label>
+              <textarea
+                id="observacao"
+                name="observacao"
+                rows="4"
+                placeholder="Descreva o estado de conservação do livro, se possui grifos, marcas de uso, etc."
+              ></textarea>
+            </div>
+
+            <!-- Botão de Submissão -->
+            <button type="submit" class="btn-submit">Publicar Anúncio</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- Script de Feedback e Redirecionamento -->
+    <script>
+      document
+        .getElementById("doar-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Oculta o formulário e cabeçalho
+          document.getElementById("doar-form").style.display = "none";
+          document.getElementById("form-header").style.display = "none";
+
+          // Exibe a mensagem de confirmação
+          const successMessage = document.getElementById("success-message");
+          successMessage.style.display = "block";
+
+          // Redireciona para o catálogo após 2.5 segundos
+          setTimeout(() => {
+            window.location.href = "catalogo.html";
+          }, 2500);
+        });
+    </script>
+  </body>
+</html>

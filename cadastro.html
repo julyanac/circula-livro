@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro - Circula Livro</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- CABEÇALHO / NAVBAR -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <span class="logo-icon">📚</span> Círcula Livro
+          </a>
+        </div>
+
+        <div class="auth-buttons">
+          <a href="login.html" class="btn-outline">Entrar</a>
+          <a href="cadastro.html" class="btn-solid">Cadastrar-se</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="auth-section">
+        <div class="auth-container">
+          <!-- Banner de Sucesso (Inicialmente Oculto) -->
+          <div
+            id="success-message"
+            class="success-banner"
+            style="display: none"
+          >
+            <span class="success-icon">✅</span>
+            <h3>Cadastro realizado com sucesso!</h3>
+            <p>Redirecionando para o catálogo em instantes...</p>
+          </div>
+
+          <div id="auth-header" class="auth-header">
+            <h2>Crie sua conta</h2>
+            <p>Junte-se à nossa comunidade e faça o conhecimento circular!</p>
+          </div>
+
+          <form id="cadastro-form" action="#" method="POST" class="auth-form">
+            <!-- Nome Completo (Obrigatório) -->
+            <div class="form-group">
+              <label for="nome">Nome Completo *</label>
+              <input
+                type="text"
+                id="nome"
+                name="nome"
+                placeholder="Ex: Maria Silva"
+                required
+              />
+            </div>
+
+            <!-- E-mail (Obrigatório) -->
+            <div class="form-group">
+              <label for="email">E-mail *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="seu.email@exemplo.com"
+                required
+              />
+            </div>
+
+            <!-- Cidade (Obrigatório) -->
+            <div class="form-group">
+              <label for="cidade">Cidade *</label>
+              <input
+                type="text"
+                id="cidade"
+                name="cidade"
+                placeholder="Ex: Campo Grande - MS"
+                required
+              />
+            </div>
+
+            <!-- Telefone (Opcional) -->
+            <div class="form-group">
+              <label for="telefone">
+                Telefone para contato <span class="optional">(Opcional)</span>
+              </label>
+              <input
+                type="tel"
+                id="telefone"
+                name="telefone"
+                placeholder="(67) 99999-9999"
+              />
+            </div>
+
+            <!-- Botão de submissão -->
+            <button type="submit" class="btn-submit">Finalizar Cadastro</button>
+          </form>
+
+          <div id="auth-footer" class="auth-footer">
+            <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Script JS para lidar com o envio e o redirecionamento -->
+    <script>
+      document
+        .getElementById("cadastro-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault(); // Impede o recarregamento da página
+
+          // Oculta o formulário e o cabeçalho original
+          document.getElementById("cadastro-form").style.display = "none";
+          document.getElementById("auth-header").style.display = "none";
+          document.getElementById("auth-footer").style.display = "none";
+
+          // Exibe a mensagem de sucesso
+          const successMessage = document.getElementById("success-message");
+          successMessage.style.display = "block";
+
+          // Redireciona para o catálogo após 2.5 segundos
+          setTimeout(() => {
+            window.location.href = "catalogo.html";
+          }, 2500);
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Circula Livro</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- CABEÇALHO / NAVBAR -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">
+          <a href="index.html">
+            <span class="logo-icon">📚</span> Círcula Livro
+          </a>
+        </div>
+
+        <div class="auth-buttons">
+          <a href="login.html" class="btn-outline">Entrar</a>
+          <a href="cadastro.html" class="btn-solid">Cadastrar-se</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="auth-section">
+        <div class="auth-container">
+          <!-- Banner de Sucesso (Inicialmente Oculto) -->
+          <div
+            id="success-message"
+            class="success-banner"
+            style="display: none"
+          >
+            <span class="success-icon">🔑✨</span>
+            <h3>Login realizado com sucesso!</h3>
+            <p>Redirecionando para o catálogo...</p>
+          </div>
+
+          <div id="auth-header" class="auth-header">
+            <h2>Acesse sua conta</h2>
+            <p>Entre para doar ou encontrar novos livros na comunidade.</p>
+          </div>
+
+          <form id="login-form" action="#" method="POST" class="auth-form">
+            <!-- E-mail -->
+            <div class="form-group">
+              <label for="email">E-mail *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="seu.email@exemplo.com"
+                required
+              />
+            </div>
+
+            <!-- Senha com alternância de visibilidade -->
+            <div class="form-group">
+              <div class="label-wrapper">
+                <label for="senha">Senha *</label>
+                <a href="#" class="forgot-password">Esqueceu a senha?</a>
+              </div>
+              <div class="password-input-wrapper">
+                <input
+                  type="password"
+                  id="senha"
+                  name="senha"
+                  placeholder="Digite sua senha"
+                  required
+                />
+                <button
+                  type="button"
+                  id="toggle-password"
+                  class="btn-toggle-password"
+                  title="Mostrar/Ocultar Senha"
+                >
+                  👁️
+                </button>
+              </div>
+            </div>
+
+            <!-- Manter Conectado -->
+            <div class="form-group-checkbox">
+              <input type="checkbox" id="remember" name="remember" />
+              <label for="remember">Lembrar de mim</label>
+            </div>
+
+            <!-- Botão de submissão -->
+            <button type="submit" class="btn-submit">Entrar</button>
+          </form>
+
+          <div id="auth-footer" class="auth-footer">
+            <p>
+              Ainda não tem uma conta? <a href="cadastro.html">Cadastre-se</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Script JS para manipulação do Form e Redirecionamento -->
+    <script>
+      // Alternar visibilidade da senha
+      const togglePasswordBtn = document.getElementById("toggle-password");
+      const passwordInput = document.getElementById("senha");
+
+      togglePasswordBtn.addEventListener("click", () => {
+        const isPassword = passwordInput.getAttribute("type") === "password";
+        passwordInput.setAttribute("type", isPassword ? "text" : "password");
+        togglePasswordBtn.textContent = isPassword ? "🙈" : "👁️";
+      });
+
+      // Submissão do Formulário de Login
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault(); // Impede o recarregamento padrão da página
+
+          // Oculta formulário e cabeçalho
+          document.getElementById("login-form").style.display = "none";
+          document.getElementById("auth-header").style.display = "none";
+          document.getElementById("auth-footer").style.display = "none";
+
+          // Exibe mensagem de confirmação
+          const successMessage = document.getElementById("success-message");
+          successMessage.style.display = "block";
+
+          // Redireciona para o catálogo após 2 segundos
+          setTimeout(() => {
+            window.location.href = "catalogo.html";
+          }, 2000);
+        });
+    </script>
+  </body>
+</html>
